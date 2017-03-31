@@ -48,12 +48,28 @@ index = random.randint(0, len(X_train))
 image = X_train[index].squeeze()
 
 print(sign_names.loc[y_train[index]])
-plt.figure(figsize=(1,1))
-plt.imshow(image, cmap="gray")
+fig, axes = plt.subplots(nrows=2, ncols=1)
+ax0, ax1 = axes.flatten()
+
+ax0.hist(image.flatten(), 256, histtype='stepfilled', color='gray', label='red')
+ax1.imshow(image, cmap="gray")
+
+fig.tight_layout()
+fig.set_size_inches(4.5, 9.5)
+plt.show()
 
 
 # %% HISTOGRAM EQUALIZATION
+
 import numpy as np
+
+def dataset_histogram_equalization(dataset):
+    data_equalized = np.zeros(dataset.shape)
+    for i in range(dataset.shape[0]):
+        image = dataset[i, :, :, 0]
+        data_equalized[i, :, :, 0] = image_histogram_equalization(image)[0]
+    return data_equalized
+
 def image_histogram_equalization(image, number_bins=256):
     # from http://www.janeriksolem.net/2009/06/histogram-equalization-with-python-and.html
 
@@ -67,18 +83,22 @@ def image_histogram_equalization(image, number_bins=256):
 
     return image_equalized.reshape(image.shape), cdf
 
-# loop over them
-data_equalized = np.zeros(X_test.shape)
-for i in range(X_test.shape[0]):
-    image = X_test[i, 0, :, :]
-    data_equalized[i, 0, :, :] = image_histogram_equalization(image)[0]
+X_train = dataset_histogram_equalization(X_train)
+X_valid = dataset_histogram_equalization(X_valid)
+X_test = dataset_histogram_equalization(X_test)
 
-index = random.randint(0, len(X_train))
+#sample
 image = X_train[index].squeeze()
 
-print(sign_names.loc[y_train[index]])
-plt.figure(figsize=(1,1))
-plt.imshow(image, cmap="gray")
+fig, axes = plt.subplots(nrows=2, ncols=1)
+ax0, ax1 = axes.flatten()
+
+ax0.hist(image.flatten(), 256, histtype='stepfilled', color='gray', label='red')
+ax1.imshow(image, cmap="gray")
+
+fig.tight_layout()
+fig.set_size_inches(4.5, 9.5)
+plt.show()
 
 # %% MIN MAX SCALING
 import matplotlib.pyplot as plt
@@ -89,7 +109,7 @@ X_valid = (X_valid - 128) / 128
 X_test = (X_test - 128) / 128
 
 fig, ax = plt.subplots()
-ax.hist(X_train.reshape(-1), 256, histtype='bar', color='gray', label='red')
+ax.hist(X_train.reshape(-1), 256, histtype='bar', color='gray', label='min-max')
 ax.legend(prop={'size': 10})
 ax.set_title('color distribution')
 
@@ -111,21 +131,21 @@ def SignNet(x):
     mu = 0
     sigma = 0.1
 
-    #Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
+    #Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x32.
     #out_height = ceil(float(in_height - filter_height + 1) / float(strides[1]))
     #out_width  = ceil(float(in_width - filter_width + 1) / float(strides[2]))
-    c1_weights = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 6), mean = mu, stddev = sigma))
-    c1_bias = tf.Variable(tf.zeros(6))
+    c1_weights = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 32), mean = mu, stddev = sigma))
+    c1_bias = tf.Variable(tf.zeros(32))
     c1 = tf.nn.conv2d(x, c1_weights, strides=[1, 1, 1, 1], padding='VALID') + c1_bias
 
     #Activation.
     c1 = tf.nn.relu(c1)
 
-    #Pooling. Input = 28x28x6. Output = 14x14x6.
+    #Pooling. Input = 28x28x32. Output = 14x14x32.
     c1 = tf.nn.max_pool(c1, ksize = [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
     #Layer 2: Convolutional. Output = 10x10x16.
-    c2_weights = tf.Variable(tf.truncated_normal(shape=(5, 5, 6, 16), mean = mu, stddev = sigma))
+    c2_weights = tf.Variable(tf.truncated_normal(shape=(5, 5, 32, 16), mean = mu, stddev = sigma))
     c2_bias = tf.Variable(tf.zeros(16))
     c2 = tf.nn.conv2d(c1, c2_weights, strides=[1, 1, 1, 1], padding='VALID') + c2_bias
 
@@ -177,8 +197,8 @@ optimizer = tf.train.AdamOptimizer(learning_rate = rate)
 training_operation = optimizer.minimize(loss_operation)
 
 # %% MODEL EVALUATION
-EPOCHS = 128
-BATCH_SIZE = 256
+EPOCHS = 64
+BATCH_SIZE = 64
 
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -195,7 +215,7 @@ def evaluate(X_data, y_data):
     return total_accuracy / num_examples
 
 # %% TRAINING MODEL
-with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     num_examples = len(X_train)
     train_error = []
