@@ -13,7 +13,7 @@
 [image10]: ./images/top_5_softmax_4.png "Top 5 softmax probabilities"
 [image11]: ./images/top_5_softmax_5.png "Top 5 softmax probabilities"
 
-#### You're reading it! :rocket: Great! here is a link to my [project code.](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb)
+#### You're reading it! :rocket: Great! here is a link to my [project code.](https://github.com/d3r0n/sdcen-road-signs/blob/master/Road-Sign-Classifier.ipynb)
 
 ### Data Set Summary & Exploration
 
@@ -24,14 +24,14 @@
 * Images are in RGB
 * The number of unique classes/labels in the data set is ?
 
-[_I have used pandas and numpy library for exploration_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Some-numbers)
+> Please see paragraph called "Some numbers" how I have used pandas and numpy for exploration.
 
 #### 2. Exploratory visualization of the dataset
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed among different traffic signs classes.
 
 As you can see the data is not uniformly distributed some classes are underrepresented (< 250 samples) and other are overrepresented (~2000 samples). This will affect how the network learns.
 
-[_Code for visualization below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Exploratory-visualization-of-the-dataset)
+>Code for visualization below is in section called "Exploratory visualization of the dataset"
 
 ![alt text][image1]
 
@@ -39,7 +39,7 @@ As you can see the data is not uniformly distributed some classes are underrepre
 
 We clearly see that the pictures tend to have low contract. We will address that.
 
-[_Code for visualization below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Color-distribution)
+>Code for visualization below is in cell called "Color distribution"
 
 ![alt text][image2]
 
@@ -56,7 +56,7 @@ Property| Value
 ClassId |                                            10
 SignName|  No passing for vehicles over 3.5 metric tons
 
-[_Code for visualization below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Pre-process)
+>Code for visualization below is in section "Grayscale"
 
 ![alt text][image3]
 
@@ -64,13 +64,13 @@ Next we address the problem of the contrast. More uniform histogram will help ne
 
 Same sign image as above but after histogram equalization.
 
-[_Code for visualization below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Histogram-equalization)
+>Code for visualization below is in section "Histogram equalization"
 
 ![alt text][image4]
 
 OK, but the network will work much better on values between -1 and 1 than 0 and 255. So here I do simple Min Max Scaling. Check out how distribution on dataset will look after this last pre-processing step.
 
-[_Code for visualization below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#min-max-scaling)
+>Code for visualization below is in section "Min Max Scaling"
 
 ![alt text][image5]
 
@@ -85,7 +85,7 @@ Each consist of following number of samples.
 #### 3. Model architecture
 The model of choice is CNN which implementation is based on the LeNet-5.
 
-[_Code for model definition below_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Model-definition)
+>Code for model definition below is in section "Model definition"
 
 My final model consisted of the following layers:
 
@@ -124,7 +124,7 @@ Either it was 1000 or 300 epochs accuracy stayed similar ~99%. Interesting is fa
 
 For gradient descend I have used AdamOptimizer which optimized over cross entropy with logits.
 
-[_Code for model training_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Train-the-Model)
+>Code for model training can be found in section "Train the Model"
 
 #### 5. Solution
 
@@ -137,7 +137,7 @@ I decided on iterative process of finding a solution. So here is how I thought:
 
 First I started with same model as LeNet-5. Next I have worked on pre processing the data. Then, to improve I had to change the model. So I have removed fully connected layer. No significant difference. Added new convolutional layer. Bingo!, better. Added dropout. More stable!. Feed outputs of 3 convolutional layers to one first fully connected. Nope. Reduced batch size. Yes, good. Reduced leering rate. Nice. What if I learn whole night? So I set epochs to 1000. What? No difference? I is not even worse? hmm.
 
-[_Code for model testing_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb#Test-the-Model)
+>Code for model training can be found in section "Test the Model"
 
 ### Test a Model on New Images
 
@@ -164,6 +164,6 @@ Lets have a look how well model is sure of its predictions. Lets look at top 5 s
 ![alt text][image10]
 ![alt text][image11]
 
-[_Code for model anlysis_](https://github.com/d3r0n/sdcen-road-signs/blob/master/Traffic_Sign_Classifier.ipynb##Top-5-Softmax-Probabilities)
+>Code for model analysis is in section called "Top 5 Softmax Probabilities"
 
 First 4 images are quite boring because model is 100% sure about them, and it is right about that. But for the last one, the "Double crossing" is not so sure. Interestingly model thinks that this might be in 20 % "Children crossing". But in 80% it is sure that it is double curve, and again that is correct!
