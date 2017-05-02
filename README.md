@@ -13,6 +13,8 @@
 [image10]: ./images/top_5_softmax_4.png "Top 5 softmax probabilities"
 [image11]: ./images/top_5_softmax_5.png "Top 5 softmax probabilities"
 
+[image12]: ./images/min_max.png "Min Max Scaling"
+
 #### You're reading it! :rocket: Great! here is a link to my [project code.](https://github.com/d3r0n/sdcen-road-signs/blob/master/Road-Sign-Classifier.ipynb)
 
 ### Data Set Summary & Exploration
@@ -72,7 +74,7 @@ OK, but the network will work much better on values between -1 and 1 than 0 and 
 
 >Code for visualization below is in section "Min Max Scaling"
 
-![alt text][image5]
+![alt text][image12]
 
 #### 2. Training, Test, Validation
 
